@@ -24,64 +24,54 @@ out: Magic number is 42%
 call: ft_printf("Hexadecimal for %d is %x\n", 42, 42);
 out: Hexadecimal for 42 is 2a$ */
 
-#include <stdlib.h>	// malloc y free
-#include <unistd.h>	// write
-#include <stdarg.h>	// va_start, va_arg, va_copy y va_end
-
-int	ft_printf(const char *str, ...);
-
-
-int	ft_strlen(char *s)
-{
-	int	i;
-
-	i = 0;
-	while (s[i])
-		i++;
-	return (i);
-}
+#include <unistd.h>
+#include <stdlib.h>
+#include <stdarg.h>
+#include <stdio.h>
 
 int	ft_print_str(char *s)
 {
 	int	i;
 
 	if (!s)
-		return(ft_printf("(null)"));
+		ft_print_str("(null)");
 	i = 0;
 	while (s[i])
 		write(1, &s[i++], 1);
-	return (i);
+	return  (i);
 }
 
-int	ft_print_num(long n, int base, char var)
+int	ft_print_num(long n, int base)
 {
-	char	*chars;
 	int		i;
+	char	*chars;
 
-	if (var == 'd')
+	if (base == 10)
 		chars = "0123456789";
-	if (var == 'x')
-		chars = "0123456789abcdf";
+	if (base == 16)
+		chars = "0123456789acdef";
+	i = 0;
 	if (n < 0)
-		return (write(1, "-", 1) + ft_print_num(-n, base, var));
-	else if (n < base)
+		return (write(1, "-", 1) + ft_print_num(-n, base));
+	if (n < base)
 		return (write(1, &chars[n], 1));
 	else
 	{
-		i = ft_print_num(n / base, base, var);
-		return (i + ft_print_num(n % base, base, var));
+		i += ft_print_num(n / base, base);
+		return  (i + ft_print_num(n % base, base));
 	}
+	return (i);
 }
 
-int	ft_printf_parse(char c, va_list args)
+int	parse_printf(char c, va_list args)
 {
 	int	i;
 
 	i = 0;
 	if (c == 'd')
-		i += ft_print_num((long)va_arg(args, int), 10, c);
+		i += ft_print_num((long)va_arg(args, int), 10);
 	else if (c == 'x')
-		i += ft_print_num((long)va_arg(args, unsigned int), 16, c);
+		i += ft_print_num((long)va_arg(args, unsigned int), 16);
 	else if (c == 's')
 		i += ft_print_str(va_arg(args, char *));
 	else
@@ -89,29 +79,40 @@ int	ft_printf_parse(char c, va_list args)
 	return (i);
 }
 
-int	ft_printf(const char *str, ...)
+int	ft_printf(const char *s, ...)
 {
-	va_list	args;
 	int		i;
+	va_list	args;
 
-	va_start(args, str);
+	va_start(args, s);
 	i = 0;
-	while (*str)
+	while (*s)
 	{
-		if (*str == '%')
-			i += ft_printf_parse(*(++str), args);
+		if (*s == '%')
+			i += parse_printf(*(++s), args);
 		else
-			i += write(1, str, 1);
-		++str;
+			i += write(1, s, 1);
+		++s;
 	}
 	va_end(args);
-	return (0);
+	return (i);
 }
 
 int	main(void)
 {
-	ft_printf("%s\n", "toto");
-	ft_printf("Magic %s is %d\n", "number", 42);
-	ft_printf("Hexadecimal for %d is %x\n", 42, 42);
+	int	i;
+
+	i =	ft_printf("%s\n", "toto");
+	printf("%d\n", i);
+	i = printf("%s\n", "toto");
+	printf("%d\n", i);
+	i = ft_printf("Magic %s is %d\n", "number", 42);
+	printf("%d\n", i);
+	i = printf("Magic %s is %d\n", "number", 42);
+	printf("%d\n", i);
+	i = ft_printf("Hexadecimal for %d is %x\n", 42, 42);
+	printf("%d\n", i);
+	i = printf("Hexadecimal for %d is %x\n", 42, 42);
+	printf("%d\n", i);	
 	return (0);
 }
