@@ -33,12 +33,12 @@ int	ft_print_str(char *s)
 {
 	int	i;
 
-	if (!s)
-		ft_print_str("(null)");
 	i = 0;
+	if (!s)
+		return (ft_print_str("(null)"));
 	while (s[i])
 		write(1, &s[i++], 1);
-	return  (i);
+	return (i);
 }
 
 int	ft_print_num(long n, int base)
@@ -49,7 +49,7 @@ int	ft_print_num(long n, int base)
 	if (base == 10)
 		chars = "0123456789";
 	if (base == 16)
-		chars = "0123456789acdef";
+		chars = "0123456789abcdef";
 	i = 0;
 	if (n < 0)
 		return (write(1, "-", 1) + ft_print_num(-n, base));
@@ -102,17 +102,20 @@ int	main(void)
 {
 	int	i;
 
-	i =	ft_printf("%s\n", "toto");
+	i =	ft_printf("%s\n", NULL);
 	printf("%d\n", i);
-	i = printf("%s\n", "toto");
+	i = printf("%s\n", NULL);
 	printf("%d\n", i);
+
 	i = ft_printf("Magic %s is %d\n", "number", 42);
 	printf("%d\n", i);
 	i = printf("Magic %s is %d\n", "number", 42);
 	printf("%d\n", i);
+
 	i = ft_printf("Hexadecimal for %d is %x\n", 42, 42);
 	printf("%d\n", i);
 	i = printf("Hexadecimal for %d is %x\n", 42, 42);
-	printf("%d\n", i);	
+	printf("%d\n", i);
+
 	return (0);
 }
